@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4580932072721803305}
   - component: {fileID: 4580932072721803304}
   - component: {fileID: -1245294190151620421}
+  - component: {fileID: -2354584712530296527}
   m_Layer: 0
   m_Name: stout woman a
   m_TagString: Untagged
@@ -82,6 +83,29 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &-2354584712530296527
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4580932072721803307}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.11333978
+  m_Height: 0.91198784
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.45400605, z: 0}
 --- !u!1001 &4580932074102136952
 PrefabInstance:
   m_ObjectHideFlags: 0
