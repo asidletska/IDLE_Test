@@ -21,23 +21,24 @@ public class Visitor : MonoBehaviour
 
     private void Update()
     {
-        animator.SetBool("walk", true);
+        animator.SetBool("walk", agent.velocity.magnitude > 0.1f);
     }
 
-    public void GoToQueue(Vector3 queuePos)
+    public void GoToQueue(Vector3 position)
     {
+        agent.SetDestination(position); 
         currentState = State.GoingToQueue;
-        agent.SetDestination(queuePos);
     }
+
     public void InQueue()
     {
         currentState = State.InQueue;
         animator.SetBool("walk", false);
         animator.SetBool("idle", true);
     }
+
     public void GoToTable(Transform table)
     {
-        animator.SetBool("walk", true);
         currentState = State.GoingToTable;
         agent.SetDestination(table.position);
         target = table;
@@ -45,9 +46,7 @@ public class Visitor : MonoBehaviour
 
     public void GoToToilet(Transform toilet)
     {
-        animator.SetBool("walk", true);
         currentState = State.GoingToToilet;
-        GameManager.Instance.AddMoney(100);
         agent.SetDestination(toilet.position);
         target = toilet;
     }
@@ -60,19 +59,23 @@ public class Visitor : MonoBehaviour
     private IEnumerator EatingRoutine(float duration)
     {
         currentState = State.Eating;
-        GameManager.Instance.AddMoney(100);
         IsEating = true;
-        animator.SetBool("Sit", true);
+        animator.SetBool("idle", true);
+        GameManager.Instance.AddMoney(100);
+
         yield return new WaitForSeconds(duration);
+
         IsEating = false;
-        RestaurantManager.Instance.FreeTable(target);
+        animator.SetBool("idle", false);
+
+        if (target != null)
+            RestaurantManager.Instance.FreeTable(target);
+
         LeaveRestaurant();
     }
 
     public void LeaveRestaurant()
     {
-        animator.SetBool("Sit", false);
-        animator.SetBool("walk", true);
         currentState = State.Leaving;
         Vector3 exit = RestaurantManager.Instance.GetExitPoint().position;
         agent.SetDestination(exit);

@@ -205,7 +205,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: strong woman c
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1696340027544733762, guid: 793466d81ca4b404b8fe9ec6dc657307, type: 3}
+    - {fileID: 7450643139986752775, guid: 793466d81ca4b404b8fe9ec6dc657307, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

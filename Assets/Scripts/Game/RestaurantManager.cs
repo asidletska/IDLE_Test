@@ -1,6 +1,5 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 
 public class RestaurantManager : MonoBehaviour
@@ -20,72 +19,76 @@ public class RestaurantManager : MonoBehaviour
     [SerializeField] private List<Transform> hiddenStoves = new List<Transform>();
 
     [SerializeField] private Chef chef;
-    [SerializeField] private Waiter waiterPrefab;
+    [SerializeField] private Waiter waiter;
 
-    private Dictionary<Transform, bool> tableBusy = new Dictionary<Transform, bool>();
+    public float queueOffset = 0.5f;
+
+    private List<Transform> busyTables = new List<Transform>();
     private Queue<Visitor> queue = new Queue<Visitor>();
+    private Queue<Visitor> waitingVisitors = new Queue<Visitor>();
 
     private void Awake()
     {
-        if (Instance == null)
+        Instance = this;
+    }
+
+    private void Update()
+    {
+        if (queue.Count > 0 && !waiter.IsBusy())
         {
-            Instance = this;
-            foreach (var table in tables)
+            Visitor visitor = queue.Dequeue();
+            Transform table = GetFreeTable();
+
+            if (table != null)
             {
-                tableBusy.Add(table, false);
+                busyTables.Add(table);
+                StartCoroutine(waiter.ServeVisitor(visitor, table, chef));
+            }
+            else
+            {
+                EnqueueVisitor(visitor);
             }
         }
-        else
-        {
-            Destroy(gameObject);
-        }
+    }
+    public void OnVisitorArrived(Visitor visitor)
+    {
+        Vector3 targetPos = queuePoint.position + Vector3.back * queueOffset * waitingVisitors.Count;
+        visitor.GoToQueue(targetPos);
+
+        waitingVisitors.Enqueue(visitor);
     }
 
-    public Transform GetExitPoint() => exitPoint;
-
-    public void EnqueueVisitor(Visitor visitor)
+    public Visitor GetNextVisitor()
     {
-        queue.Enqueue(visitor);
-        visitor.GoToQueue(queuePoint.position + Vector3.right * queue.Count * 1.5f);
-    }
-
-    public void TryServeNextVisitor()
-    {
-        if (queue.Count == 0) return;
-
-        Visitor v = queue.Dequeue();
-        Transform table = GetFreeTable();
-        if (table != null)
+        if (waitingVisitors.Count > 0)
         {
-            Waiter waiter = Instantiate(waiterPrefab);
-            StartCoroutine(waiter.ServeVisitor(v, table, chef));
-        }
-        else
-        {
-            EnqueueVisitor(v);
-        }
-    }
-
-    private Transform GetFreeTable()
-    {
-        foreach (var table in tables)
-        {
-            if (!tableBusy[table])
-            {
-                tableBusy[table] = true;
-                return table;
-            }
+            return waitingVisitors.Dequeue();
         }
         return null;
+    }
+    public void EnqueueVisitor(Visitor visitor)
+    {
+        if (!queue.Contains(visitor))
+            queue.Enqueue(visitor);
     }
 
     public void FreeTable(Transform table)
     {
-        if (table != null && tableBusy.ContainsKey(table))
-        {
-            tableBusy[table] = false;
-        }
+        if (busyTables.Contains(table))
+            busyTables.Remove(table);
     }
+
+    private Transform GetFreeTable()
+    {
+        foreach (var t in tables)
+        {
+            if (!busyTables.Contains(t))
+                return t;
+        }
+        return null;
+    }
+    public Transform GetExitPoint() => exitPoint;
+
  public void AddNewTable()
     {
         if (hiddenTables.Count > 0)
