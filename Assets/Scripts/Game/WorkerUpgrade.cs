@@ -7,7 +7,7 @@ public class WorkerUpgrade : Upgradeable
 
     protected override void ApplyUpgrade()
     {
-        speed = baseSpeed + (level - 1) * 0.2f; // кожен рівень +20% швидкості
+        speed = baseSpeed + (level - 1) * 0.2f;
         Debug.Log("Worker upgraded! Speed = " + speed);
     }
 

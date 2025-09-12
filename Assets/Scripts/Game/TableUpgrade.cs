@@ -6,7 +6,7 @@ public class TableUpgrade : Upgradeable
 
     protected override void ApplyUpgrade()
     {
-        capacity = 2 + (level - 1); // кожен апгрейд додає 1 місце
+        capacity = 2 + (level - 1); 
         Debug.Log("Table upgraded! Capacity = " + capacity);
     }
 }

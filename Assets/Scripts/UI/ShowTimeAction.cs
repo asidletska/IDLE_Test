@@ -4,8 +4,8 @@ using UnityEngine.UI;
 
 public class ShowTimeAction : MonoBehaviour
 {
-    [SerializeField] private Image circleFill; // Image з Fill Method = Radial 360
-    [SerializeField] private float duration = 5f; // час у секундах
+    [SerializeField] private Image circleFill; 
+    [SerializeField] private float duration = 5f; 
 
     private Coroutine timerRoutine;
 
@@ -32,7 +32,7 @@ public class ShowTimeAction : MonoBehaviour
             yield return null;
         }
 
-        circleFill.fillAmount = 1f; // гарантовано заповниться в кінці
+        circleFill.fillAmount = 1f; 
         timerRoutine = null;
 
         Debug.Log("Таймер завершився!");

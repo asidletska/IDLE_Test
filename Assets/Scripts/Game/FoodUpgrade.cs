@@ -6,7 +6,7 @@ public class FoodUpgrade : Upgradeable
 
     protected override void ApplyUpgrade()
     {
-        foodValue = 10 + (level - 1) * 5; // кожен рівень +5 до ціни страви
+        foodValue = 10 + (level - 1) * 5; 
         Debug.Log("Food upgraded! Value = " + foodValue);
     }
 }

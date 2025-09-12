@@ -6,7 +6,7 @@ public class ToiletUpgrade : Upgradeable
 
     protected override void ApplyUpgrade()
     {
-        satisfaction = 1f + (level - 1) * 0.1f; // кожен рівень +10% задоволення
+        satisfaction = 1f + (level - 1) * 0.1f; 
         Debug.Log("Toilet upgraded! Satisfaction = " + satisfaction);
     }
 }

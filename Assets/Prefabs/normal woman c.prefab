@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: -8359489493253876797}
   - component: {fileID: -222140231296136171}
   - component: {fileID: -1244531646349804414}
+  - component: {fileID: -1391886769752465644}
   m_Layer: 0
   m_Name: normal woman c
   m_TagString: Untagged
@@ -120,6 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ddc8b408929495b479c8e57c63eea904, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsEating: 0
 --- !u!114 &-1244531646349804414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -135,6 +137,28 @@ MonoBehaviour:
   moveSpeed: 2
   waitTime: 1
   waypoints: []
+--- !u!195 &-1391886769752465644
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481669548617104346}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 2
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 1
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &5481669548902992030
 PrefabInstance:
   m_ObjectHideFlags: 0

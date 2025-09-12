@@ -19,8 +19,7 @@ public class Visitor : MonoBehaviour
         this.toiletPoint = toiletPoint;
         this.toiletUseTime = toiletUseTime;
 
-        // Шанс піти в туалет
-        if (Random.value < 0.3f) // 30%
+        if (Random.value < 0.3f) 
         {
             StartCoroutine(GoToToiletRoutine());
         }
@@ -38,7 +37,6 @@ public class Visitor : MonoBehaviour
     {
         CurrentState = State.GoingToToilet;
 
-        // Чекаємо, поки туалет звільниться
         while (spawner.IsToiletBusy())
         {
             yield return null;
@@ -46,7 +44,6 @@ public class Visitor : MonoBehaviour
 
         spawner.SetToiletBusy(true);
 
-        // Рухаємось до туалету
         while (Vector3.Distance(transform.position, toiletPoint.position) > 0.05f)
         {
             transform.position = Vector3.MoveTowards(transform.position, toiletPoint.position, Time.deltaTime * moveSpeed);
@@ -55,14 +52,12 @@ public class Visitor : MonoBehaviour
 
         CurrentState = State.UsingToilet;
 
-        // Використовує туалет
         yield return new WaitForSeconds(toiletUseTime);
 
         spawner.SetToiletBusy(false);
 
         CurrentState = State.Returning;
 
-        // Повертаємось у кінець черги
         spawner.EnqueueVisitor(this);
         CurrentState = State.InQueue;
     }
@@ -70,7 +65,7 @@ public class Visitor : MonoBehaviour
     public void SitAtTable(Transform table)
     {
         transform.position = table.position;
-        CurrentState = State.UsingToilet; // тут можна зробити State.AtTable
+        CurrentState = State.UsingToilet; 
     }
 
     public void StartEating()
@@ -81,7 +76,7 @@ public class Visitor : MonoBehaviour
     private IEnumerator EatingRoutine()
     {
         IsEating = true;
-        yield return new WaitForSeconds(Random.Range(4f, 7f)); // час їжі
+        yield return new WaitForSeconds(Random.Range(4f, 7f)); 
         IsEating = false;
     }
 
