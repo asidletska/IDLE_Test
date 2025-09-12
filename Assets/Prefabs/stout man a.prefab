@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 4797605776506193499}
   - component: {fileID: -6970327515891106043}
   - component: {fileID: -4340184193923925585}
+  - component: {fileID: 8497149763265606513}
+  - component: {fileID: -6050153324962879790}
   m_Layer: 0
   m_Name: stout man a
   m_TagString: Untagged
@@ -45,7 +47,7 @@ Animator:
   m_GameObject: {fileID: 4797605776506193496}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: aa18ba140040d32439939bba79e19639, type: 2}
+  m_Controller: {fileID: 9100000, guid: cd4e8639a4615f347a114f0495f6600d, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -81,7 +83,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 80
   m_CollisionDetection: 0
 --- !u!136 &-4340184193923925585
 CapsuleCollider:
@@ -106,6 +108,33 @@ CapsuleCollider:
   m_Height: 0.91198784
   m_Direction: 1
   m_Center: {x: 0, y: 0.45400605, z: 0}
+--- !u!114 &8497149763265606513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4797605776506193496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ddc8b408929495b479c8e57c63eea904, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-6050153324962879790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4797605776506193496}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bd91cd8942c62741b6bbba60bc6e401, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 2
+  waitTime: 1
+  waypoints: []
 --- !u!1001 &4797605776171907314
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -442,6 +471,11 @@ PrefabInstance:
     - target: {fileID: 4416100983449443705, guid: e135098a3d2506c47b77c212f14da368,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: e135098a3d2506c47b77c212f14da368,
+        type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7207279218219231579, guid: e135098a3d2506c47b77c212f14da368,
