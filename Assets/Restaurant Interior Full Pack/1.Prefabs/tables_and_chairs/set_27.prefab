@@ -45,7 +45,6 @@ GameObject:
   - component: {fileID: 2100110590739078856}
   - component: {fileID: 8142148350295079582}
   - component: {fileID: 5881325124810633731}
-  - component: {fileID: 5813143735861440383}
   m_Layer: 0
   m_Name: chair_21
   m_TagString: Untagged
@@ -118,27 +117,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5813143735861440383
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3119876293218251203}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.343, y: 0.34130847, z: 0.686}
-  m_Center: {x: 0, y: 0.17065424, z: 0}
 --- !u!1 &4634206268852775532
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,7 +233,6 @@ GameObject:
   - component: {fileID: 2963387523566382210}
   - component: {fileID: 8289963607137081374}
   - component: {fileID: 4340781602858952834}
-  - component: {fileID: 1547826554404979140}
   m_Layer: 0
   m_Name: chair_22
   m_TagString: Untagged
@@ -328,24 +305,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1547826554404979140
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5854000637807857807}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.343, y: 0.34014222, z: 0.686}
-  m_Center: {x: 0, y: 0.17007111, z: 0}

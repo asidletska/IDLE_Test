@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class LoadingScreen : MonoBehaviour
 {
     [SerializeField] private Slider progressBar;
-
+    private float minLoadTime = 3f;
     private void Start()
     {
         SceneLoad("SampleScene");
@@ -20,19 +20,22 @@ public class LoadingScreen : MonoBehaviour
     {
         AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
-        float progress = 0;
-        while (!operation.isDone)
+        float timer = 0f;
+        while (true)
         {
-            float targetProgress = Mathf.Clamp01(operation.progress / 0.9f);
-            progress = Mathf.MoveTowards(progress, targetProgress, Time.deltaTime);
-            progressBar.value = progress;
-            if (progress >= 1f && operation.progress >= 0.9f)
+            float currentProgress = Mathf.Max(operation.progress / 0.9f, timer / minLoadTime);
+            progressBar.value = currentProgress;
+
+            if (operation.progress >= 0.9f && timer >= minLoadTime)
             {
-                // Активуємо сцену
                 operation.allowSceneActivation = true;
+                break; 
             }
+
+            timer += Time.deltaTime;
 
             yield return null;
         }
+        progressBar.value = 1f;
     }
 }

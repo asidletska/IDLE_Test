@@ -1,41 +1,46 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Waiter : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 2f;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private bool isBusy;
 
-    private bool isBusy = false;
+    private void Awake()
+    {
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+    }
+
+    private void Update()
+    {
+        animator.SetBool("walk", true);
+    }
 
     public IEnumerator ServeVisitor(Visitor visitor, Transform table, Chef chef)
     {
         if (isBusy) yield break;
         isBusy = true;
 
-        yield return MoveTo(visitor.transform, table.position);
-        visitor.SitAtTable(table);
+        visitor.GoToTable(table);
+        yield return new WaitUntil(() => !visitor.GetComponent<NavMeshAgent>().pathPending &&
+                                          visitor.GetComponent<NavMeshAgent>().remainingDistance < 0.2f);
 
-        yield return MoveTo(transform, chef.transform.position);
+        agent.SetDestination(chef.GetCookingPoint().position);
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.2f);
 
-        bool mealReady = false;
-        yield return chef.StartCoroutine(chef.CookMeal(() => mealReady = true));
-        while (!mealReady) yield return null;
+        bool ready = false;
+        yield return StartCoroutine(chef.CookMeal(() => ready = true));
+        while (!ready) yield return null;
 
-        yield return MoveTo(transform, table.position);
-        visitor.StartEating();
+        agent.SetDestination(table.position);
+        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.2f);
 
-        while (visitor.IsEating) yield return null;
+        visitor.StartEating(Random.Range(4f, 7f));
 
-        visitor.LeaveTable();
         isBusy = false;
     }
-
-    private IEnumerator MoveTo(Transform obj, Vector3 targetPos)
-    {
-        while (Vector3.Distance(obj.position, targetPos) > 0.05f)
-        {
-            obj.position = Vector3.MoveTowards(obj.position, targetPos, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-    }
 }
+

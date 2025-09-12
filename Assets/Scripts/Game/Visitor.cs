@@ -1,87 +1,81 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Visitor : MonoBehaviour
 {
-    public enum State { InQueue, GoingToToilet, UsingToilet, Returning }
+    public enum State { GoingToQueue, InQueue, GoingToTable, Eating, GoingToToilet, Leaving }
 
-    private NPCSPawner spawner;
-    private Transform toiletPoint;
-    private float toiletUseTime;
-    private float moveSpeed = 2f;
-    public bool IsEating;
+    private NavMeshAgent agent;
+    private Animator animator;
+    private Transform target;
+    private State currentState;
 
-    public State CurrentState { get; private set; } = State.InQueue;
+    public bool IsEating { get; private set; }
 
-    public void Setup(NPCSPawner spawner, Transform toiletPoint, float toiletUseTime)
+    private void Awake()
     {
-        this.spawner = spawner;
-        this.toiletPoint = toiletPoint;
-        this.toiletUseTime = toiletUseTime;
-
-        if (Random.value < 0.3f) 
-        {
-            StartCoroutine(GoToToiletRoutine());
-        }
+        agent = GetComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
     }
 
-    public void MoveTo(Vector3 targetPos)
+    private void Update()
     {
-        if (CurrentState == State.InQueue)
-        {
-            transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * moveSpeed);
-        }
+        animator.SetBool("walk", true);
     }
 
-    private IEnumerator GoToToiletRoutine()
+    public void GoToQueue(Vector3 queuePos)
     {
-        CurrentState = State.GoingToToilet;
-
-        while (spawner.IsToiletBusy())
-        {
-            yield return null;
-        }
-
-        spawner.SetToiletBusy(true);
-
-        while (Vector3.Distance(transform.position, toiletPoint.position) > 0.05f)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, toiletPoint.position, Time.deltaTime * moveSpeed);
-            yield return null;
-        }
-
-        CurrentState = State.UsingToilet;
-
-        yield return new WaitForSeconds(toiletUseTime);
-
-        spawner.SetToiletBusy(false);
-
-        CurrentState = State.Returning;
-
-        spawner.EnqueueVisitor(this);
-        CurrentState = State.InQueue;
+        currentState = State.GoingToQueue;
+        agent.SetDestination(queuePos);
+    }
+    public void InQueue()
+    {
+        currentState = State.InQueue;
+        animator.SetBool("walk", false);
+        animator.SetBool("idle", true);
+    }
+    public void GoToTable(Transform table)
+    {
+        animator.SetBool("walk", true);
+        currentState = State.GoingToTable;
+        agent.SetDestination(table.position);
+        target = table;
     }
 
-    public void SitAtTable(Transform table)
+    public void GoToToilet(Transform toilet)
     {
-        transform.position = table.position;
-        CurrentState = State.UsingToilet; 
+        animator.SetBool("walk", true);
+        currentState = State.GoingToToilet;
+        GameManager.Instance.AddMoney(100);
+        agent.SetDestination(toilet.position);
+        target = toilet;
     }
 
-    public void StartEating()
+    public void StartEating(float duration)
     {
-        StartCoroutine(EatingRoutine());
+        StartCoroutine(EatingRoutine(duration));
     }
 
-    private IEnumerator EatingRoutine()
+    private IEnumerator EatingRoutine(float duration)
     {
+        currentState = State.Eating;
+        GameManager.Instance.AddMoney(100);
         IsEating = true;
-        yield return new WaitForSeconds(Random.Range(4f, 7f)); 
+        animator.SetBool("Sit", true);
+        yield return new WaitForSeconds(duration);
         IsEating = false;
+        RestaurantManager.Instance.FreeTable(target);
+        LeaveRestaurant();
     }
 
-    public void LeaveTable()
+    public void LeaveRestaurant()
     {
-       
+        animator.SetBool("Sit", false);
+        animator.SetBool("walk", true);
+        currentState = State.Leaving;
+        Vector3 exit = RestaurantManager.Instance.GetExitPoint().position;
+        agent.SetDestination(exit);
+        Destroy(gameObject, 5f);
     }
 }
