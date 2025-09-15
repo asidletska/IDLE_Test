@@ -21,11 +21,10 @@ public class RestaurantManager : MonoBehaviour
     [SerializeField] private Chef chef;
     [SerializeField] private Waiter waiter;
 
-    public float queueOffset = 0.5f;
+    public float queueOffset = 1f;
 
     private List<Transform> busyTables = new List<Transform>();
     private Queue<Visitor> queue = new Queue<Visitor>();
-    private Queue<Visitor> waitingVisitors = new Queue<Visitor>();
 
     private void Awake()
     {
@@ -43,33 +42,34 @@ public class RestaurantManager : MonoBehaviour
             {
                 busyTables.Add(table);
                 StartCoroutine(waiter.ServeVisitor(visitor, table, chef));
+
+                UpdateQueuePositions();
             }
             else
             {
-                EnqueueVisitor(visitor);
+                queue.Enqueue(visitor);
             }
         }
     }
+
     public void OnVisitorArrived(Visitor visitor)
     {
-        Vector3 targetPos = queuePoint.position + Vector3.back * queueOffset * waitingVisitors.Count;
-        visitor.GoToQueue(targetPos);
-
-        waitingVisitors.Enqueue(visitor);
+        queue.Enqueue(visitor);
+        UpdateQueuePositions();
     }
-
-    public Visitor GetNextVisitor()
+    public Transform GetFirstQueuePoint()
     {
-        if (waitingVisitors.Count > 0)
+        return queuePoint;
+    }
+    private void UpdateQueuePositions()
+    {
+        int index = 0;
+        foreach (var visitor in queue)
         {
-            return waitingVisitors.Dequeue();
+            Vector3 targetPos = queuePoint.position + Vector3.left * queueOffset * index;
+            visitor.GoToQueue(targetPos);
+            index++;
         }
-        return null;
-    }
-    public void EnqueueVisitor(Visitor visitor)
-    {
-        if (!queue.Contains(visitor))
-            queue.Enqueue(visitor);
     }
 
     public void FreeTable(Transform table)
@@ -87,9 +87,18 @@ public class RestaurantManager : MonoBehaviour
         }
         return null;
     }
-    public Transform GetExitPoint() => exitPoint;
 
- public void AddNewTable()
+    public Transform GetFreeToilet()
+    {
+        return toilets.FirstOrDefault(); 
+    }
+    public Transform GetExitPoint() => exitPoint;
+    public void OnVisitorLeft()
+    {
+        FindObjectOfType<NPCSPawner>()?.VisitorLeft();
+    }
+
+    public void AddNewTable()
     {
         if (hiddenTables.Count > 0)
         {
@@ -98,7 +107,7 @@ public class RestaurantManager : MonoBehaviour
 
             tables.Add(newTable);
             hiddenTables.Remove(newTable);
-            
+            GameManager.Instance.TrySpendMoney(500);
             Debug.Log($"New table added! Total tables: {tables.Count}");
         }
         else
@@ -116,7 +125,7 @@ public class RestaurantManager : MonoBehaviour
 
             toilets.Add(newToilet);
             hiddenToilets.Remove(newToilet);
-            
+            GameManager.Instance.TrySpendMoney(500);
             Debug.Log($"New toilet added! Total toilets: {toilets.Count}");
         }
         else
@@ -134,7 +143,7 @@ public class RestaurantManager : MonoBehaviour
 
             fridges.Add(newFridge);
             hiddenFridges.Remove(newFridge);
-            
+            GameManager.Instance.TrySpendMoney(500);
             Debug.Log($"New fridge added! Total fridges: {fridges.Count}");
         }
         else
@@ -152,7 +161,7 @@ public class RestaurantManager : MonoBehaviour
 
             stoves.Add(newStove);
             hiddenStoves.Remove(newStove);
-            
+            GameManager.Instance.TrySpendMoney(500);
             Debug.Log($"New stove added! Total stoves: {stoves.Count}");
         }
         else
@@ -160,17 +169,4 @@ public class RestaurantManager : MonoBehaviour
             Debug.Log("No more hidden stoves to activate.");
         }
     }
-    public void AttemptUpgrade(Upgradeable item)
-    {
-        if (item.Upgrade())
-        {
-            Debug.Log($"");
-        }
-        else
-        {
-            Debug.Log("Not ");
-        }
-
-    }
-
 }

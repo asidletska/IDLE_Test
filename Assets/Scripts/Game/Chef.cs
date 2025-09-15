@@ -1,25 +1,41 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Chef : MonoBehaviour
 {
 
-    [SerializeField] private Transform cookingPoint;
+    [SerializeField] private Transform fridgePoint;
+    [SerializeField] private Transform stovePoint;
+    [SerializeField] private Transform counterPoint;
     [SerializeField] private float cookingTime = 3f;
 
     private Animator animator;
+    private NavMeshAgent agent;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
+        agent = GetComponent<NavMeshAgent>();
+        agent.stoppingDistance = 0.3f;
     }
 
-    public Transform GetCookingPoint() => cookingPoint;
+    public Transform GetFridgePoint() => fridgePoint;
 
     public IEnumerator CookMeal(System.Action onMealReady)
     {
-        animator?.SetTrigger("Cook");
+        agent.SetDestination(fridgePoint.position);
+        yield return new WaitUntil(() => agent.remainingDistance < 0.4f);
+
+        agent.SetDestination(stovePoint.position);
+        yield return new WaitUntil(() => agent.remainingDistance < 0.4f);
+
+        animator?.SetTrigger("idle");
         yield return new WaitForSeconds(cookingTime);
+
+        agent.SetDestination(counterPoint.position);
+        yield return new WaitUntil(() => agent.remainingDistance < 0.4f);
+
         onMealReady?.Invoke();
     }
 

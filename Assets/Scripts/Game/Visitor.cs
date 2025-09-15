@@ -17,38 +17,43 @@ public class Visitor : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        agent.stoppingDistance = 0.3f; 
     }
 
     private void Update()
     {
         animator.SetBool("walk", agent.velocity.magnitude > 0.1f);
+        if (currentState == State.GoingToQueue && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            InQueue();
+            animator.SetBool("idle", true);
+        }
     }
 
-    public void GoToQueue(Vector3 position)
+    public void GoToQueue(Vector3 queuePos)
     {
-        agent.SetDestination(position); 
         currentState = State.GoingToQueue;
+        agent.SetDestination(queuePos);
     }
 
     public void InQueue()
     {
         currentState = State.InQueue;
         animator.SetBool("walk", false);
-        animator.SetBool("idle", true);
     }
 
     public void GoToTable(Transform table)
     {
         currentState = State.GoingToTable;
-        agent.SetDestination(table.position);
         target = table;
+        agent.SetDestination(table.position);
     }
 
     public void GoToToilet(Transform toilet)
     {
         currentState = State.GoingToToilet;
-        agent.SetDestination(toilet.position);
         target = toilet;
+        agent.SetDestination(toilet.position);
     }
 
     public void StartEating(float duration)
@@ -61,15 +66,22 @@ public class Visitor : MonoBehaviour
         currentState = State.Eating;
         IsEating = true;
         animator.SetBool("idle", true);
-        GameManager.Instance.AddMoney(100);
 
         yield return new WaitForSeconds(duration);
 
         IsEating = false;
+        GameManager.Instance.AddMoney(100);
         animator.SetBool("idle", false);
 
-        if (target != null)
-            RestaurantManager.Instance.FreeTable(target);
+        if (Random.value < 0.3f)
+        {
+            var toilet = RestaurantManager.Instance.GetFreeToilet();
+            if (toilet != null)
+            {
+                GoToToilet(toilet);
+                yield break;
+            }
+        }
 
         LeaveRestaurant();
     }
@@ -80,5 +92,6 @@ public class Visitor : MonoBehaviour
         Vector3 exit = RestaurantManager.Instance.GetExitPoint().position;
         agent.SetDestination(exit);
         Destroy(gameObject, 5f);
+        RestaurantManager.Instance.OnVisitorLeft();
     }
 }

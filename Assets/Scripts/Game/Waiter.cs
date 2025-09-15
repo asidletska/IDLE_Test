@@ -7,11 +7,15 @@ public class Waiter : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private bool isBusy;
+    [SerializeField] private Transform idlePoint;
+    [SerializeField] private Transform tablePoint;
+
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        agent.stoppingDistance = 0.3f;
     }
 
     private void Update()
@@ -24,30 +28,32 @@ public class Waiter : MonoBehaviour
         if (isBusy) yield break;
         isBusy = true;
 
-        // крок 1: відвідувач іде до столу
         visitor.GoToTable(table);
-        yield return new WaitUntil(() => !visitor.GetComponent<NavMeshAgent>().pathPending &&
-                                          visitor.GetComponent<NavMeshAgent>().remainingDistance < 0.2f);
+        yield return new WaitUntil(() => visitor.GetComponent<NavMeshAgent>().remainingDistance < 0.4f);
 
-        // крок 2: офіціант іде до кухаря
-        agent.SetDestination(chef.GetCookingPoint().position);
-        yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.2f);
+        //agent.SetDestination(chef.GetFridgePoint().position);
+        agent.SetDestination(idlePoint.position);
+        yield return new WaitUntil(() => agent.remainingDistance < 0.4f);
 
-        // крок 3: кухар готує
         bool ready = false;
         yield return StartCoroutine(chef.CookMeal(() => ready = true));
         while (!ready) yield return null;
 
-        // крок 4: офіціант несе їжу відвідувачу
-        agent.SetDestination(table.position);
+        agent.SetDestination(tablePoint.position);
         yield return new WaitUntil(() => !agent.pathPending && agent.remainingDistance < 0.2f);
 
-        // крок 5: відвідувач починає їсти
         visitor.StartEating(Random.Range(4f, 7f));
+
+        if (idlePoint != null)
+        {
+            agent.SetDestination(idlePoint.position);
+        }
 
         isBusy = false;
     }
-
-    public bool IsBusy() => isBusy;
+    public bool IsBusy()
+    {
+        return isBusy;
+    }
 }
 

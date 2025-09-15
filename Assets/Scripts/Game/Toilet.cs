@@ -18,13 +18,15 @@ public class Toilet : MonoBehaviour
 
         isBusy = true;
         visitor.GoToToilet(transform);
-        yield return new WaitUntil(() => visitor.GetComponent<NavMeshAgent>().remainingDistance < 0.2f);
+        yield return new WaitUntil(() => visitor.GetComponent<NavMeshAgent>().remainingDistance < 0.1f);
 
         yield return new WaitForSeconds(useTime);
 
         isBusy = false;
         isDirty = true;
         dirtyEffect?.Play();
+
+        visitor.LeaveRestaurant();
     }
 
     public void Clean()

@@ -4,7 +4,7 @@ public class NPCSPawner : MonoBehaviour
 {
     [Header("Spawner Settings")]
     [SerializeField] private GameObject[] visitorPrefabs;
-    [SerializeField] private Transform[] spawnPoints;
+    [SerializeField] private Transform[] spawnPoints;   
     [SerializeField] private float spawnInterval = 3f;
     [SerializeField] private int maxVisitors = 10;
 
@@ -32,9 +32,18 @@ public class NPCSPawner : MonoBehaviour
 
         if (visitor != null)
         {
-            RestaurantManager.Instance.EnqueueVisitor(visitor);
-        }
+            RestaurantManager.Instance.OnVisitorArrived(visitor);
 
+            Transform firstQueuePoint = RestaurantManager.Instance.GetFirstQueuePoint();
+            if (firstQueuePoint != null)
+            {
+                visitor.GoToQueue(firstQueuePoint.transform.position);
+            }
+        }
         spawnedCount++;
+    }
+    public void VisitorLeft()
+    {
+        spawnedCount = Mathf.Max(0, spawnedCount - 1);
     }
 }
